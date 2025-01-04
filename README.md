@@ -9,12 +9,11 @@
 This code example is part of a larger system that I built to convert Images into GCode.
 
 ## What is GCode / CNC
-GCode, also known as Geometric Code is used to control CNC (computer numerical control) machines. Here are what some CNC machines looks like:  
+GCode, also known as Geometric Code is used to control CNC (computer numerical control) machines. Here is what a CNC machine looks like:  
 
 ![ezgif-6-36a6f9987d](https://github.com/user-attachments/assets/18919437-dbe0-46e9-a8bd-727d28c98ce4)
-![6b06fe3a9735af6e7985e1155beecee0](https://github.com/user-attachments/assets/542450d2-5564-4b5d-9f29-d1f20c7c62ad)
 
-Some other examples include 3D printers, laser cutters, and pen plotters (this one will be important later). A CNC machines uses software to control the movement of its various tools. This software is called GCode. Here is what GCode looks like: 
+Some other examples include 3D printers, laser cutters, and pen plotters (this one will be important later). A CNC machine uses software to control the movement of its various tools. This software is called GCode. Here is what GCode looks like: 
 
 ```
 ; Basic GCode Example
