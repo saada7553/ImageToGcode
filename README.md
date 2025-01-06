@@ -80,6 +80,6 @@ The final step is to convert the `ToolpathCommand` objects into the text GCode f
 https://github.com/user-attachments/assets/58ecec79-eaad-49ac-a0cb-0d6fe1f2feaf
 
 ## Future plans
-- Replace machine raspberry PI with a custom FPGA module. This would allow me to have more control over the stepper motors with pulse width modulation. Currently experimenting with Basys2 FPGA. 
+- Replace machine raspberry PI with a custom FPGA module. This would allow me to have more control over the stepper motors with pulse width modulation. Currently experimenting with Basys2 board w/ Xilinx FPGA. 
 - I want to add support for more advanced GCode toolpaths involving variable feed rates. Straight lines should be drawn faster than tight curves.
 - Build a 3D GCode visualiser. 
