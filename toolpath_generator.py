@@ -59,16 +59,15 @@ class ToolpathGenerator:
             # We couldn't fit a circle / curve to the current window of points. 
             # Fallback to using a straight line to connect the points. 
             if not biggest_fit: 
-                if i + 1 < len(trace): 
-                    next_point = trace[i + 1]
-                    linear_move = LinearMove(x=next_point[0], y=next_point[1])
-                    toolpath.append(linear_move)
+                next_point = trace[i]
+                linear_move = LinearMove(x=next_point[0], y=next_point[1])
+                toolpath.append(linear_move)
                 i += 1
                 continue
             
             # We found a circle that fits current points decently well (within tolerance). 
             # Which way does the circle go? (clockwise or counter clockwise)? 
-            #   - Use orientation test (theory linked below). 
+            #   - Use orientation_test (theory linked at function definition). 
             x_center, y_center, radius, window_points = biggest_fit
             start_point, end_point = window_points[0], window_points[-1]
 

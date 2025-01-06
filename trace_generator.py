@@ -3,9 +3,9 @@ import numpy as np
 class TraceGenerator: 
 
     def __init__(self, binary_image, width: int, height: int): 
-        self.neighbors = [(-1, -1), (0, -1), (1, -1),
-                          (-1,  0), (1,  0), (-1,  1), 
-                          (0,  1), (1,  1)]
+        self.neighbors_4 = [(0, 1), (1, 0), (-1, 0), (0, -1)] # up, down, right, left
+        self.neighbors_8 = [(0, 1), (1, 0), (1, 1), (0, -1),  
+                          (-1, 0), (-1, -1), (-1, 1), (1, -1)] # neighbors_4 + diagonals
         self.binary_image = binary_image
         self.width = width
         self.height = height
@@ -15,12 +15,12 @@ class TraceGenerator:
         A boundary pixel is an ON (1) pixel which is either: 
             1) At the edge of an image.
             OR
-            2) Adjacent to at least one OFF (0) pixel. 
+            2) 4 directionally adjacent to at least one OFF (0) pixel. 
         """
         if not self.binary_image[y][x]: 
             return False
 
-        for dx, dy in self.neighbors: 
+        for dx, dy in self.neighbors_4: 
             nx, ny = x + dx, y + dy
             if not (0 <= nx < self.width and 0 <= ny < self.height): 
                 return True
@@ -47,10 +47,10 @@ class TraceGenerator:
         current_point = start_point
         while True: 
             found_next = False
-
+            
             for i in range(8): 
                 new_direction_index = (prev_direction_index + i) % 8
-                dx, dy = self.neighbors[new_direction_index]
+                dx, dy = self.neighbors_8[new_direction_index]
                 nx, ny = current_point[0] + dx, current_point[1] + dy
 
                 if (0 <= nx < self.width and 
