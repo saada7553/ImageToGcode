@@ -3,52 +3,66 @@ import numpy as np
 from toolpaths import *
 
 class ToolpathGenerator: 
-    def __init__(self, contours, scale=0.1, arc_tolerance=1.0): 
-        self.contours = contours
+    def __init__(self, traces, scale=1.0, arc_tolerance=1.0): 
+        self.traces = traces
         self.scale = scale
         self.arc_tolerance = arc_tolerance
         self.toolpaths = []
     
     def generate_toolpaths(self): 
-        for contour in self.contours: 
-            scaled_contour = [(x * self.scale, y * self.scale) for (x, y) in contour]
-            toolpath = self.integrate_arcs(scaled_contour)
+        for trace in self.traces: 
+            scaled_trace = [(x * self.scale, y * self.scale) for (x, y) in trace]
+            toolpath = self.integrate_arcs(scaled_trace)
             self.toolpaths.append(toolpath)
         
-    def integrate_arcs(self, contour): 
+    def integrate_arcs(self, trace): 
+        """
+        Parameters:
+        - trace: list of (x: int, y: int) coordinares which represents
+        a line or curve that we want to draw. 
+
+        Splits traces into multiple toolpaths: 
+            1) If a set of points can be represented as a curve, 
+            try to 'fit a circle' to that curve. Each original point
+            must be within a tolerance distance to the new circle which 
+            connects the points. 
+
+            2) If a circle can not be fit to a set of points, 
+            fall back and just draw a straight line between the points. 
+        """
         toolpath = []
 
         i = 0
-        while i < len(contour): 
+        while i < len(trace): 
             curr_window_size = 3 
-            max_window_size = min(10, len(contour) - i)
+            max_window_size = min(10, len(trace) - i)
 
             biggest_fit = None
             biggest_window = curr_window_size
 
             for size in range(curr_window_size, max_window_size + 1): 
-                window_points = contour[i : i + size]
-                xc, yc, r = self.least_squares_circle_fit(window_points)
+                window_points = trace[i : i + size]
+                x_center, y_center, radius = self.least_squares_circle_fit(window_points)
 
-                if xc is None: 
+                if x_center is None: 
                     break
             
-                max_dist = self.calculate_max_distance(window_points, xc, yc, r)
+                max_dist = self.calculate_max_distance(window_points, x_center, y_center, radius)
                 if max_dist > self.arc_tolerance: 
                     break
 
-                biggest_fit = (xc, yc, r, window_points)
+                biggest_fit = (x_center, y_center, radius, window_points)
                 biggest_window = size
             
             if not biggest_fit: 
-                if i + 1 < len(contour): 
-                    next_point = contour[i + 1]
+                if i + 1 < len(trace): 
+                    next_point = trace[i + 1]
                     linear_move = LinearMove(x=next_point[0], y=next_point[1])
                     toolpath.append(linear_move)
                 i += 1
                 continue
                 
-            xc, yc, r, window_points = biggest_fit
+            x_center, y_center, radius, window_points = biggest_fit
             start_point, end_point = window_points[0], window_points[-1]
 
             if len(window_points) >= 3: 
@@ -60,8 +74,8 @@ class ToolpathGenerator:
             else: 
                 clockwise = True
             
-            i_offset = xc - start_point[0]
-            j_offset = yc - start_point[1]
+            i_offset = x_center - start_point[0]
+            j_offset = y_center - start_point[1]
 
             circular_move = ArcMove(
                 end_point[0], 
@@ -82,16 +96,22 @@ class ToolpathGenerator:
 
     @staticmethod
     def least_squares_circle_fit(points): 
+        """
+        Try to find a circle whose curve is similar
+        to the points within the list. 
+
+        Theory: http://www.juddzone.com/ALGORITHMS/least_squares_circle.html
+        """
         x_coordinates = np.array([point[0] for point in points])
         y_coordinates = np.array([point[1] for point in points])
-        A = np.c_[2*x_coordinates, 2*y_coordinates, np.ones(len(points))]
+        A = np.column_stack((2*x_coordinates, 2*y_coordinates, np.ones(len(points))))
         b = x_coordinates**2 + y_coordinates**2
 
         try: 
-            c, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
-            xc, yc, c0 = c
-            r = math.sqrt(c0 + xc**2 + yc**2)
-            return (xc, yc, r)
+            res, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
+            x_center, y_center, c0 = res
+            radius = math.sqrt(c0 + x_center**2 + y_center**2)
+            return (x_center, y_center, radius)
         except np.linalg.LinAlgError: 
             return (None, None, None)
     
@@ -99,3 +119,4 @@ class ToolpathGenerator:
     def calculate_max_distance(points, xc, yc, r): 
         distances = [abs(math.hypot(p[0]-xc, p[1]-yc) - r) for p in points]
         return max(distances)
+    

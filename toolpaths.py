@@ -27,7 +27,8 @@ class LinearMove(ToolpathCommand):
 
 class ArcMove(ToolpathCommand):
     """
-    CW or CCW curved move with G2/G3 Command
+    Circular move, G2 for clockwise turn. 
+    G3 for counter clockwise turn. 
     """
     def __init__(self, x, y, i, j, clockwise=True):
         self.x = x

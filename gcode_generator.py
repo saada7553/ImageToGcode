@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-from contour_generator import ContourGenerator
+from trace_generator import TraceGenerator
 from PIL import Image
 from toolpaths import *
 from toolpath_generator import ToolpathGenerator
@@ -25,16 +25,18 @@ class GCodeGenerator:
         self.gcode.append(self.return_to_home_gcode())
     
     def convert_toolpath_to_gcode(self): 
-        for i, toolpath in enumerate(self.toolpaths): 
-            if not toolpath: 
-                continue
-                
-            self.gcode.append(self.pen_down_command.to_gcode())
-            for command in toolpath: 
+        for toolpath in self.toolpaths: 
+            for i, command in enumerate(toolpath):
+                # 0th command moves pen gantry to correct location with pen up. 
+                # 1st command moves pen down to begin drawing. 
+                if i == 0: 
+                    self.gcode.append(self.pen_up_command.to_gcode())
+                elif i == 1: 
+                    self.gcode.append(self.pen_down_command.to_gcode()) 
                 self.gcode.append(command.to_gcode())
-            self.gcode.append(self.pen_up_command.to_gcode())
     
     def generate_footer(self): 
+        self.gcode.append(self.pen_up_command.to_gcode())
         self.gcode.append(self.return_to_home_gcode())
         self.gcode.append("M2 ; End the program.")
     
@@ -56,12 +58,12 @@ def main():
 
     width, height = img.size
     pixels = np.array(img)
-    binary_image = np.where(pixels >= 0.5, 1, 0)
+    binary_image = np.where(pixels >= 0.5, 0, 1)
 
-    contour_generator = ContourGenerator(binary_image, width, height)
-    contours = contour_generator.find_contours()
+    trace_generator = TraceGenerator(binary_image, width, height)
+    traces = trace_generator.find_all_moore_traces()
 
-    toolpath_gen = ToolpathGenerator(contours, scale=1, arc_tolerance=0)
+    toolpath_gen = ToolpathGenerator(traces, scale=1, arc_tolerance=0.1)
     toolpath_gen.generate_toolpaths()
 
     gcode_gen = GCodeGenerator(
