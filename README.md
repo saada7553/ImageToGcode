@@ -2,7 +2,7 @@
 
 ## Table of contents
 - [Overview](#overview)
-- What is GCode / CNC
+- [What is GCode / CNC](#what-is-gcode-cnc)
 - How to generate GCode
 - Why convert images to GCode
 - How this converter works
