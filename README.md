@@ -68,7 +68,7 @@ To solve this problem, GCode allows us to move in arcs with the `G2` or `G3` ins
 
 In order to find a circle or arc which best fits a set of points, I implemented a simple `least squares circle fit` algorithm. Some of the theory behind that algorithm can be found here: http://www.juddzone.com/ALGORITHMS/least_squares_circle.html
 
-### Step 3: Resolve toolpaths into GCode.
+### Step 4: Resolve toolpaths into GCode.
 The final step is to convert the `ToolpathCommand` objects into the text GCode format that the machine can understand. Here, we add the `PenUp`, `PenDown` and `return_to_home` commands that are needed in between the traces. Additionally, we add a header and footer to the GCode for machine-specific configurations. Finally, the GCode is saved in `output.txt` at the specified output directory. 
 
 ## Results
