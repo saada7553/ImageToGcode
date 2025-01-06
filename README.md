@@ -2,7 +2,7 @@
 
 ## Table of contents
 - [Overview](#overview)
-- [What is GCode / CNC](#what-is-gcode-cnc)
+- [What is GCode and CNC](#what-is-gcode-and-cnc)
 - How to generate GCode
 - Why convert images to GCode
 - How this converter works
@@ -12,7 +12,7 @@
 ## Overview
 This code sample is part of a larger system that I built to convert Images into GCode. This code was originally meant to be used alongside a frontend application which could visualize the images and the generated GCode. I have converted it to a CLI interface to simplify it down to the core logic. 
 
-## What is GCode / CNC
+## What is GCode and CNC
 GCode, also known as Geometric Code is used to control CNC (computer numerical control) machines. Here is what a CNC machine looks like:  
 
 ![ezgif-6-36a6f9987d](https://github.com/user-attachments/assets/18919437-dbe0-46e9-a8bd-727d28c98ce4)
