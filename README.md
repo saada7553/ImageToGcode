@@ -7,7 +7,7 @@
 - Why convert images to GCode
 
 ## Overview
-This code example is part of a larger system that I built to convert Images into GCode.
+This code sample is part of a larger system that I built to convert Images into GCode. This code was originally meant to be used alongside a frontend application which could visualize the images and the generated GCode. I have converted it to a CLI interface to simplify it down to the core logic. 
 
 ## What is GCode / CNC
 GCode, also known as Geometric Code is used to control CNC (computer numerical control) machines. Here is what a CNC machine looks like:  
@@ -44,4 +44,4 @@ Most CNC machines are used to presisely maunfacture 3D parts. Software such as A
 <img width="1399" alt="Screenshot 2025-01-04 at 7 07 06 PM" src="https://github.com/user-attachments/assets/c7849c32-7c8d-4107-a87d-3546d19a563f" />
 
 
-AutoCAD can produce GCode instructions for pen plotters. However, these 3D modeling softwares were never built with this type of functionality in mind. They struggle with modeling large amounts of text. Their options for formatting text is also very limited. Additionally, if you need your pen plotter to draw out an image, AutoCAD requires the image to be manually traced, a process that is clunky and not well-suited for a software primarily designed for engineering and architectural purposes. For this reason, I built this image to GCode converter so that I can easily produce instructions for my pen plotter. 
+AutoCAD can produce GCode instructions for pen plotters. However, these 3D modeling softwares were never built with this type of functionality in mind. They struggle with modeling large amounts of text. Their options for formatting text are also very limited. Additionally, if you need your pen plotter to draw out an image, AutoCAD requires the image to be manually traced, a process that is clunky and not well-suited for a software primarily designed for engineering and architectural purposes. For this reason, I built this image to GCode converter so that I can easily produce instructions for my pen plotter. 
