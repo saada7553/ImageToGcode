@@ -3,11 +3,11 @@
 ## Table of contents
 - [Overview](#overview)
 - [What is GCode and CNC](#what-is-gcode-and-cnc)
-- How to generate GCode
-- Why convert images to GCode
-- How this converter works
-- Results
-- Future plans
+- [How to generate GCode](#how-to-generate-gcode)
+- [Why convert images to GCode](#why-convert-images-to-gcode)
+- [How this converter works](#how-this-converter-works)
+- [Results](#results)
+- [Future plans](#future-plans)
 
 ## Overview
 This code sample is part of a larger system that I built to convert Images into GCode. This code was originally meant to be used alongside a frontend application which could visualize the images and the generated GCode. I have converted it to a CLI interface to simplify it down to the core logic. 
