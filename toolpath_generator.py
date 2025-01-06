@@ -40,6 +40,8 @@ class ToolpathGenerator:
             biggest_fit = None
             biggest_window = curr_window_size
 
+            # Keep adding points to the current window. 
+            # If all the points & generated curve stay within tolerence, try making the circle bigger. 
             for size in range(curr_window_size, max_window_size + 1): 
                 window_points = trace[i : i + size]
                 x_center, y_center, radius = self.least_squares_circle_fit(window_points)
@@ -54,6 +56,8 @@ class ToolpathGenerator:
                 biggest_fit = (x_center, y_center, radius, window_points)
                 biggest_window = size
             
+            # We couldn't fit a circle / curve to the current window of points. 
+            # Fallback to using a straight line to connect the points. 
             if not biggest_fit: 
                 if i + 1 < len(trace): 
                     next_point = trace[i + 1]
@@ -61,12 +65,15 @@ class ToolpathGenerator:
                     toolpath.append(linear_move)
                 i += 1
                 continue
-                
+            
+            # We found a circle that fits current points decently well (within tolerance). 
+            # Which way does the circle go? (clockwise or counter clockwise)? 
+            #   - Use orientation test (theory linked below). 
             x_center, y_center, radius, window_points = biggest_fit
             start_point, end_point = window_points[0], window_points[-1]
 
             if len(window_points) >= 3: 
-                cross_product = self.cross_product(
+                cross_product = self.orientation_test(
                     window_points[0], 
                     window_points[1], 
                     window_points[2])
@@ -90,7 +97,11 @@ class ToolpathGenerator:
         return toolpath
         
     @staticmethod
-    def cross_product(point0, point1, point2): 
+    def orientation_test(point0, point1, point2): 
+        """
+        Find out if the points form a clockwise or a counter clockwise curve. 
+        Theory: https://dccg.upc.edu/people/vera/wp-content/uploads/2012/10/DAG-OrientationTests.pdf
+        """
         return ((point1[0] - point0[0]) * (point2[1] - point0[1]) - 
                 (point1[1] - point0[1]) * (point2[0] - point0[0]))
 
@@ -100,7 +111,7 @@ class ToolpathGenerator:
         Try to find a circle whose curve is similar
         to the points within the list. 
 
-        Theory: http://www.juddzone.com/ALGORITHMS/least_squares_circle.html
+        Theory & explained equations: http://www.juddzone.com/ALGORITHMS/least_squares_circle.html
         """
         x_coordinates = np.array([point[0] for point in points])
         y_coordinates = np.array([point[1] for point in points])
