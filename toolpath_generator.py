@@ -30,12 +30,16 @@ class ToolpathGenerator:
             2) If a circle can not be fit to a set of points, 
             fall back and just draw a straight line between the points. 
         """
-        toolpath = []
+        if not trace: return 
 
-        i = 0
+        # The pen gantry needs to be moved in a straight line to the 
+        # first point of this trace. This move is not a part of the drawing. 
+        toolpath = [LinearMove(x=trace[0][0], y=trace[0][1])]
+
+        i = 1
         while i < len(trace): 
             curr_window_size = 3 
-            max_window_size = min(10, len(trace) - i)
+            max_window_size = len(trace) - i
 
             biggest_fit = None
             biggest_window = curr_window_size
@@ -67,16 +71,13 @@ class ToolpathGenerator:
             
             # We found a circle that fits current points decently well (within tolerance). 
             # Which way does the circle go? (clockwise or counter clockwise)? 
-            #   - Use orientation_test (theory linked at function definition). 
+            #   - Use circle_orientation (theory linked at function definition). 
             x_center, y_center, radius, window_points = biggest_fit
             start_point, end_point = window_points[0], window_points[-1]
 
             if len(window_points) >= 3: 
-                cross_product = self.orientation_test(
-                    window_points[0], 
-                    window_points[1], 
-                    window_points[2])
-                clockwise = cross_product < 0
+                cross = self.circle_orientation((x_center, y_center), start_point, end_point)
+                clockwise = cross < 0
             else: 
                 clockwise = True
             
@@ -94,15 +95,16 @@ class ToolpathGenerator:
 
             i += biggest_window - 1
         return toolpath
-        
+
     @staticmethod
-    def orientation_test(point0, point1, point2): 
+    def circle_orientation(center, start, end):
         """
         Find out if the points form a clockwise or a counter clockwise curve. 
-        Theory: https://dccg.upc.edu/people/vera/wp-content/uploads/2012/10/DAG-OrientationTests.pdf
+        Theory: https://www.geeksforgeeks.org/orientation-3-ordered-points/
         """
-        return ((point1[0] - point0[0]) * (point2[1] - point0[1]) - 
-                (point1[1] - point0[1]) * (point2[0] - point0[0]))
+        sx, sy = start[0] - center[0], start[1] - center[1]
+        ex, ey = end[0]   - center[0], end[1]   - center[1]
+        return sx * ey - sy * ex
 
     @staticmethod
     def least_squares_circle_fit(points): 
