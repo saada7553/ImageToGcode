@@ -5,7 +5,7 @@ class TraceGenerator:
     def __init__(self, binary_image, width: int, height: int): 
         self.neighbors_4 = [(0, 1), (1, 0), (-1, 0), (0, -1)] # up, down, right, left
         self.neighbors_8 = [(0, 1), (1, 0), (1, 1), (0, -1),  
-                          (-1, 0), (-1, -1), (-1, 1), (1, -1)] # neighbors_4 + diagonals
+                            (-1, 0), (-1, -1), (-1, 1), (1, -1)] # neighbors_4 + diagonals
         self.binary_image = binary_image
         self.width = width
         self.height = height
